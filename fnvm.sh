@@ -9,7 +9,7 @@ fnvm_escape_search() {
 }
 fnvm_escape_replace() {
 	IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1")
-	fnvm_out "${REPLY%'\n'}"
+	fnvm_out "${REPLY%$'\n'}"
 }
 fnvm_safe_find() {
 	grep -q -F "$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$2")" <<<"$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$1")" || return 1
