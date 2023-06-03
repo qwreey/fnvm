@@ -1,6 +1,6 @@
 # What is fnvm?
 
-<div center>
+<div align=center>
 
 ![](images/how_nvm_slow_is.png)
 
