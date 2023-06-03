@@ -55,14 +55,19 @@ fnvm_cd() {
 
 # update fnvm
 fnvm_update() {
-	nvmdir=$NVM_DIR
+	git -C $NVM_DIR/fnvm pull
 	fnvm_uninit
-	source $nvmdir/fnvm/installer.sh
+
+	# load installer
+	if [ "$(basename "$(pwd)")" = "fnvm" ] && [ -e "./installer.sh" ]; then
+		source ./installer.sh
+	else
+		source $nvmdir/fnvm/installer.sh
+	fi
 
 	[ -e "$HOME/.zshrc" ] && fnvm_update_rcfile "$HOME/.zshrc"
 	[ -e "$HOME/.bashrc" ] && fnvm_update_rcfile "$HOME/.bashrc"
 	
-	git -C $nvmdir/fnvm pull
 	source $nvmdir/fnvm/fnvm.sh
 	fnvm_init
 }
