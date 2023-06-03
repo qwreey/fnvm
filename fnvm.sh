@@ -76,6 +76,8 @@ fnvm_update() {
 	git -C $NVM_DIR/fnvm pull
 	fnvm_uninit
 
+	[ -z "$nvmdir" ] && nvmdir="$HOME/.nvm"
+
 	# load installer
 	if [ "$(basename "$(pwd)")" = "fnvm" ] && [ -e "./installer.sh" ]; then
 		source ./installer.sh
