@@ -28,12 +28,12 @@ fnvm_use() {
 		export NVM_INC="${version_dir}/include/node"
 		export FNVM_VER="$1"
 	else
-		echo "ERROR: path '$version_dir' is not exist, failed to load nodejs. please check your ~/.nvmrc.cached"
-		echo "Tip: To init .nvmrc.cached follow this step"
-		echo "  nvm install node # Choose version you want"
-		echo "  nvm use node"
-		echo "  node --version > ~/.nvmrc.default"
-		echo "  export FNVM_VER=\$(cat ~/.nvmrc.default)"
+		fnvm_out "ERROR: path '$version_dir' is not exist, failed to load nodejs. Please check your ~/.nvmrc.default"$'\n'
+		fnvm_out "Tip: To init .nvmrc.cached follow this step"$'\n'
+		fnvm_out "  nvm install node # Choose version you want"$'\n'
+		fnvm_out "  nvm use node"$'\n'
+		fnvm_out "  node --version > ~/.nvmrc.default"$'\n'
+		fnvm_out "  export FNVM_VER=\$(cat ~/.nvmrc.default)"$'\n'
 	fi
 }
 
@@ -66,7 +66,7 @@ fnvm_apply() {
 	[ "$FNVM_NVMRC" = "$FNVM_NVMRC_DEFAULT" ] && return
 	[ ! -z "$FNVM_NVMRC" ] && echo "Reverting to ~/.nvmrc.default"
 	export FNVM_NVMRC="$FNVM_NVMRC_DEFAULT"
-	fnvm_use "$(cat $FNVM_NVMRC_DEFAULT)"
+	fnvm_use "$(cat "$FNVM_NVMRC_DEFAULT")"
 }
 
 # cd wraping
