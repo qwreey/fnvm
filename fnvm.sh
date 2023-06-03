@@ -17,7 +17,7 @@ fnvm_safe_find() {
 }
 fnvm_replace_file() {
 	# fnvm_safe_find "$(cat $1)" "$2" || return
-	sed "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/g" "$1"
+	sed "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/g" -i "$1"
 	# sed -n -e ':a' -e '$!{N;ba' -e '}' -e "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/p" -i "$1"
 }
 fnvm_replace() {
