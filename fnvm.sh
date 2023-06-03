@@ -16,9 +16,9 @@ fnvm_safe_find() {
 	# grep -q -F "$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$2")" <<<"$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$1")" || return 1
 }
 fnvm_replace_file() {
-	# fnvm_safe_find "$(cat $1)" "$2" || return
-	sed "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/g" -i "$1"
-	# sed -n -e ':a' -e '$!{N;ba' -e '}' -e "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/p" -i "$1"
+	fnvm_safe_find "$(cat $1)" "$2" || return
+	# sed "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/g" -i "$1"
+	sed -n -e ':a' -e '$!{N;ba' -e '}' -e "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/p" -i "$1"
 }
 fnvm_replace() {
 	# fnvm_safe_find "$1" "$2" || return
