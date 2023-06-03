@@ -1,13 +1,10 @@
 # reformatting
 fnvm_escape_search() {
-	echo "$(sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\
-\\n' <<<"$1" | tr -d '\n')"
+	printf '%s' "$(sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n')"
 }
-
 fnvm_escape_replace() {
 	IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1")
-	echo "${REPLY%'
-'}"
+	printf '%s' "${REPLY%'\n'}"
 }
 fnvm_safe_find() {
 	grep -q -F "$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$2")" <<<"$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$1")" || return 1
