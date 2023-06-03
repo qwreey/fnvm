@@ -1,3 +1,4 @@
+# bash / zsh compatible echo
 fnvm_out() {
 	\printf '%s' $(sed "s/"$'\r'"//g"<<<"$@")
 }
