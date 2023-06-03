@@ -1,9 +1,11 @@
 # What is fnvm?
 
-<div center markdown>
+<div center>
+
 ![](images/how_nvm_slow_is.png)
 
 wow nvm takes almost 2 seconds to initialize!
+
 </div>
 
 fnvm is some hacky method that makes nvm much faster in cygwin.  
