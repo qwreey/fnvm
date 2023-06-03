@@ -32,7 +32,7 @@ fnvm_pathformat() {
 
 # faster nvm use
 fnvm_use() {
-	version_dir="$NVM_DIR/versions/node/$1"
+	version_dir="$(fnvm_out "$NVM_DIR/versions/node/$1")"
 	if [ ! -z "$version_dir" ] && [ -e "$version_dir" ]; then
 		[ "$FNVM_VER" = "$1" ] && return
 		export PATH=$(fnvm_pathformat "$version_dir/bin")
