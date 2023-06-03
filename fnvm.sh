@@ -152,7 +152,9 @@ fnvm_uninit() {
 fnvm_init() {
 	export NVM_DIR="$HOME/.nvm"
 	export FNVM_NVMRC_DEFAULT="$HOME/.nvmrc.default"
-	shell_name=$(basename $(fnvm_out $0))
+	shell_name='$0'
+	[ -z "$shell_name" ] && shell_name="$SHELL"
+	shell_name=$(basename "$shell_name")
 
 	source "$NVM_DIR/nvm.sh" --no-use
 	[ "$shell_name" = "bash" ] && source "$NVM_DIR/bash_completion"
