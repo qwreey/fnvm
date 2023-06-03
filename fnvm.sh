@@ -50,7 +50,7 @@ fnvm_apply() {
 
 # cd wraping
 fnvm_cd() {
-	\cd $@ && fnvm_update
+	\cd $@ && fnvm_apply
 }
 
 # update fnvm
