@@ -1,14 +1,17 @@
+fnvm_out() {
+	\printf '%s' "$@"
+}
 
 # faster nvm change path
 fnvm_pathformat() {
 	if [ -z "${1-}" ]; then
-		echo "${3-}${2-}"
+		fnvm_out '%s' "${3-}${2-}"
 	elif ! grep -q "${NVM_DIR}/[^/]*${2-}" <<<"${1-}" \
 		&& ! grep -q "${NVM_DIR}/versions/[^/]*/[^/]*${2-}" <<<"${1-}"; then
-		echo "${3-}${2-}:${1-}"
+		fnvm_out "${3-}${2-}:${1-}"
 	elif grep -Eq "(^|:)(/usr(/local)?)?${2-}:.*${NVM_DIR}/[^/]*${2-}" <<<"${1-}" \
 		|| grep -Eq "(^|:)(/usr(/local)?)?${2-}:.*${NVM_DIR}/versions/[^/]*/[^/]*${2-}" <<<"${1-}"; then
-		echo "${3-}${2-}:${1-}"
+		fnvm_out "${3-}${2-}:${1-}"
 	else
 		sed -e "s#${NVM_DIR}/[^/]*${2-}[^:]*#${3-}${2-}#"\
 			-e "s#${NVM_DIR}/versions/[^/]*/[^/]*${2-}[^:]*#${3-}${2-}#" <<<"${1-}"
@@ -114,7 +117,7 @@ fnvm_uninit() {
 fnvm_init() {
 	export NVM_DIR="$HOME/.nvm"
 	export FNVM_NVMRC_DEFAULT="$HOME/.nvmrc.default"
-	shell_name=$(basename $(echo $0))
+	shell_name=$(basename $(fnvm_out $0))
 
 	source "$NVM_DIR/nvm.sh" --no-use
 	[ "$shell_name" = "bash" ] && source "$NVM_DIR/bash_completion"
