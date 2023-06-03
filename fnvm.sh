@@ -1,9 +1,26 @@
+
+# faster nvm change path
+fnvm_pathformat() {
+	if [ -z "${1-}" ]; then
+		echo "${3-}${2-}"
+	elif ! grep -q "${NVM_DIR}/[^/]*${2-}" <<<"${1-}" \
+		&& ! grep -q "${NVM_DIR}/versions/[^/]*/[^/]*${2-}" <<<"${1-}"; then
+		echo "${3-}${2-}:${1-}"
+	elif grep -Eq "(^|:)(/usr(/local)?)?${2-}:.*${NVM_DIR}/[^/]*${2-}" <<<"${1-}" \
+		|| grep -Eq "(^|:)(/usr(/local)?)?${2-}:.*${NVM_DIR}/versions/[^/]*/[^/]*${2-}" <<<"${1-}"; then
+		echo "${3-}${2-}:${1-}"
+	else
+		sed -e "s#${NVM_DIR}/[^/]*${2-}[^:]*#${3-}${2-}#"\
+			-e "s#${NVM_DIR}/versions/[^/]*/[^/]*${2-}[^:]*#${3-}${2-}#" <<<"${1-}"
+	fi
+}
+
 # faster nvm use
 fnvm_use() {
 	version_dir=$(nvm_version_path "$1" 2> /dev/null)
 	if [ ! -z "$version_dir" ] && [ -e "$version_dir" ]; then
 		[ "$FNVM_VER" = "$1" ] && return
-		export PATH=$(nvm_change_path "${PATH}" "/bin" "${version_dir}")
+		export PATH=$(fnvm_pathformat "${PATH}" "/bin" "${version_dir}")
 		export NVM_BIN="${version_dir}/bin"
 		export NVM_INC="${version_dir}/include/node"
 		export FNVM_VER="$1"
@@ -12,8 +29,8 @@ fnvm_use() {
 		echo "Tip: To init .nvmrc.cached follow this step"
 		echo "  nvm install node # Choose version you want"
 		echo "  nvm use node"
-		echo "  node --version > ~/.nvmrc.cached"
-		echo "  export FNVM_VER=\$(cat ~/.nvmrc.cached)"
+		echo "  node --version > ~/.nvmrc.default"
+		echo "  export FNVM_VER=\$(cat ~/.nvmrc.default)"
 	fi
 }
 
