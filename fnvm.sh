@@ -3,20 +3,31 @@ fnvm_out() {
 	\printf '%s' $(sed "s/"$'\r'"//g"<<<"$@")
 }
 
+# reformatter
+fnvm_escape_search() {
+	sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n'
+}
+fnvm_escape_replace() {
+	IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1")
+	fnvm_out "${REPLY%'\n'}"
+}
+fnvm_safe_find() {
+	grep -q -F "$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$2")" <<<"$(sed ':a;N;$!ba;s/\n/__NEWLINE__/g' <<<"$1")" || return 1
+}
+fnvm_replace_file() {
+	fnvm_safe_find "$(cat $1)" "$2" || return
+	sed -n -e ':a' -e '$!{N;ba' -e '}' -e "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/p" -i "$1"
+}
+fnvm_replace() {
+	fnvm_safe_find "$1" "$2" || return
+	sed -n -e ':a' -e '$!{N;ba' -e '}' -e "s/$(fnvm_escape_search "$2")/$(fnvm_escape_replace "$3")/p" <<<"$1"
+}
+
 # faster nvm change path
 fnvm_pathformat() {
-	if [ -z "${1-}" ]; then
-		fnvm_out '%s' "${3-}${2-}"
-	elif ! grep -q "${NVM_DIR}/[^/]*${2-}" <<<"${1-}" \
-		&& ! grep -q "${NVM_DIR}/versions/[^/]*/[^/]*${2-}" <<<"${1-}"; then
-		fnvm_out "${3-}${2-}:${1-}"
-	elif grep -Eq "(^|:)(/usr(/local)?)?${2-}:.*${NVM_DIR}/[^/]*${2-}" <<<"${1-}" \
-		|| grep -Eq "(^|:)(/usr(/local)?)?${2-}:.*${NVM_DIR}/versions/[^/]*/[^/]*${2-}" <<<"${1-}"; then
-		fnvm_out "${3-}${2-}:${1-}"
-	else
-		sed -e "s#${NVM_DIR}/[^/]*${2-}[^:]*#${3-}${2-}#"\
-			-e "s#${NVM_DIR}/versions/[^/]*/[^/]*${2-}[^:]*#${3-}${2-}#" <<<"${1-}"
-	fi
+	\printf "%s:%s"\
+		"${1-}"\
+		"$(sed "s#$(fnvm_escape_search "$NVM_DIR")/[^:]*:##g" <<<"$PATH")"
 }
 
 # faster nvm use
@@ -24,7 +35,7 @@ fnvm_use() {
 	version_dir="$(fnvm_out "$(nvm_version_path "$1" 2> /dev/null)")"
 	if [ ! -z "$version_dir" ] && [ -e "$version_dir" ]; then
 		[ "$FNVM_VER" = "$1" ] && return
-		export PATH=$(fnvm_pathformat "${PATH}" "/bin" "${version_dir}")
+		export PATH=$(fnvm_pathformat "$version_dir")
 		export NVM_BIN="${version_dir}/bin"
 		export NVM_INC="${version_dir}/include/node"
 		export FNVM_VER="$1"
@@ -76,18 +87,41 @@ fnvm_cd() {
 }
 
 # update fnvm
+# update single rc file
+fnvm_update_rcfile() {
+	pattern1='export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
+	pattern2='export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm'
+	pattern3="export NVM_DIR=\"$(cygpath --mixed $HOME)/.nvm\"
+[ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"  # This loads nvm
+[ -s \"\$NVM_DIR/bash_completion\" ] && \. \"\$NVM_DIR/bash_completion\"  # This loads nvm bash_completion"
+	replace='# load fnvm
+source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init'
+
+	grep -F -q 'source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init' "$1" && return
+	content="$(cat "$1")"
+	fnvm_safe_find "$content" "$pattern1" ||
+	fnvm_safe_find "$content" "$pattern2" ||
+	fnvm_safe_find "$content" "$pattern3"
+	if [ "$?" = "0" ]; then
+		echo "Updating $1 ..."
+		fnvm_replace_file "$1" "$pattern1" "$replace"
+		fnvm_replace_file "$1" "$pattern2" "$replace"
+		fnvm_replace_file "$1" "$pattern3" "$replace"
+	else
+		echo "'source nvm.sh' is not found from $1."
+		echo "Appending fnvm loader on end of $1"
+		echo "Please manually remove original nvm sourcing on $1 if exist"
+		echo "$replace" >> $1
+	fi
+}
 fnvm_update() {
 	git -C $NVM_DIR/fnvm pull
 	fnvm_uninit
 
 	[ -z "$nvmdir" ] && nvmdir="$HOME/.nvm"
-
-	# load installer
-	if [ "$(basename "$(pwd)")" = "fnvm" ] && [ -e "./installer.sh" ]; then
-		source ./installer.sh
-	else
-		source $nvmdir/fnvm/installer.sh
-	fi
 
 	[ -e "$HOME/.zshrc" ] && fnvm_update_rcfile "$HOME/.zshrc"
 	[ -e "$HOME/.bashrc" ] && fnvm_update_rcfile "$HOME/.bashrc"
