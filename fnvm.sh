@@ -1,5 +1,5 @@
 fnvm_out() {
-	\printf '%s' "$@"
+	\printf '%s' $(sed "s/"$'\r'"//g"<<<"$@")
 }
 
 # faster nvm change path
@@ -20,7 +20,7 @@ fnvm_pathformat() {
 
 # faster nvm use
 fnvm_use() {
-	version_dir=$(nvm_version_path "$1" 2> /dev/null)
+	version_dir="$(fnvm_out "$(nvm_version_path "$1" 2> /dev/null)")"
 	if [ ! -z "$version_dir" ] && [ -e "$version_dir" ]; then
 		[ "$FNVM_VER" = "$1" ] && return
 		export PATH=$(fnvm_pathformat "${PATH}" "/bin" "${version_dir}")
