@@ -34,8 +34,9 @@ fnvm_apply() {
 			nvm install "$content"
 		else
 			# found it, use with faster method
-			fnvm_use $version
 			echo "Found '$cpd_nvmrc' with version $version"
+			fnvm_use $version
+			echo "PATH was updated"
 		fi
 		export FNVM_NVMRC=$cpd_nvmrc
 		return
