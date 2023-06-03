@@ -1,5 +1,8 @@
 # What is fnvm?
 
+![](images/how_nvm_slow_is.png)
+wow nvm takes almost 2 seconds to initialize!
+
 fnvm is some hacky method that makes nvm much faster in cygwin.  
 In cygwin, nvm makes bash slower. even it takes 2~10 second to initialize  
 fnvm using ~/.nvmrc.cached which created by user and contain cached node version to set PATH directly without calling nvm's version resolver which is very slow due to checking system installed nodejs and iojs, resolving all of installed nodes.  
