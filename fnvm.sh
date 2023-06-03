@@ -102,6 +102,8 @@ source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init'
 
 	grep -F -q 'source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init' "$1" && return
 	content="$(cat "$1")"
+	fnvm_safe_find "$content" "# FNVM NOUPDATE" && return
+
 	fnvm_safe_find "$content" "$pattern1" ||
 	fnvm_safe_find "$content" "$pattern2" ||
 	fnvm_safe_find "$content" "$pattern3"
