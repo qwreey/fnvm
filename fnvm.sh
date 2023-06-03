@@ -1,6 +1,6 @@
 # bash / zsh compatible echo
 fnvm_out() {
-	\printf '%s' $(sed ":a;N;$!ba;s/\r//g"<<<"$@")
+	sed ':a;N;$!ba;s/'$'\r''//g'<<<"$@"
 }
 
 # reformatter
