@@ -1,6 +1,7 @@
 # What is fnvm?
 
 ![](images/how_nvm_slow_is.png)
+
 wow nvm takes almost 2 seconds to initialize!
 
 fnvm is some hacky method that makes nvm much faster in cygwin.  
