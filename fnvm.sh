@@ -35,7 +35,7 @@ fnvm_use() {
 	version_dir="$(fnvm_out "$(nvm_version_path "$1" 2> /dev/null)")"
 	if [ ! -z "$version_dir" ] && [ -e "$version_dir" ]; then
 		[ "$FNVM_VER" = "$1" ] && return
-		export PATH=$(fnvm_pathformat "$version_dir")
+		export PATH=$(fnvm_pathformat "$version_dir/bin")
 		export NVM_BIN="${version_dir}/bin"
 		export NVM_INC="${version_dir}/include/node"
 		export FNVM_VER="$1"
