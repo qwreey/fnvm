@@ -150,7 +150,7 @@ fnvm_uninit() {
 
 # load fnvm
 fnvm_init() {
-	if [ -z "$FNVM_NVMDIR"]; then
+	if [ -z "$FNVM_NVMDIR" ]; then
 		export NVM_DIR="$HOME/.nvm"
 	else
 		export NVM_DIR="$FNVM_NVMDIR"
