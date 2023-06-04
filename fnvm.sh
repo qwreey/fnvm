@@ -152,7 +152,11 @@ fnvm_uninit() {
 
 # load fnvm
 fnvm_init() {
-	export NVM_DIR="$HOME/.nvm"
+	if [ -z "$FNVM_DIR"]; then
+		export NVM_DIR="$HOME/.nvm"
+	else
+		export NVM_DIR="$FNVM_DIR"
+	fi
 	export FNVM_NVMRC_DEFAULT="$HOME/.nvmrc.default"
 	shell_name='$0'
 	[ -z "$shell_name" ] && shell_name="$SHELL"
