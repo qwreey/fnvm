@@ -38,7 +38,7 @@ fnvm_use() {
 		export PATH=$(fnvm_pathformat "$version_dir/bin")
 		export NVM_BIN="${version_dir}/bin"
 		export NVM_INC="${version_dir}/include/node"
-		export FNVM_VER="$1"
+		FNVM_VER="$1"
 	else
 		fnvm_out "ERROR: path '$version_dir' is not exist, failed to load nodejs. Please check your ~/.nvmrc.default"$'\n'
 		fnvm_out "Tip: To init .nvmrc.cached follow this step"$'\n'
@@ -70,14 +70,14 @@ fnvm_apply() {
 			fnvm_use $version
 			echo "PATH was updated"
 		fi
-		export FNVM_NVMRC=$cpd_nvmrc
+		FNVM_NVMRC=$cpd_nvmrc
 		return
 	fi
 
 	# load default version
 	[ "$FNVM_NVMRC" = "$FNVM_NVMRC_DEFAULT" ] && return
 	[ ! -z "$FNVM_NVMRC" ] && echo "Reverting to ~/.nvmrc.default"
-	export FNVM_NVMRC="$FNVM_NVMRC_DEFAULT"
+	FNVM_NVMRC="$FNVM_NVMRC_DEFAULT"
 	fnvm_use "$(cat "$FNVM_NVMRC_DEFAULT")"
 }
 
@@ -171,5 +171,9 @@ fnvm_init() {
 			alias cd=fnvm_cd
 		fi
 	fi
+
+	unset FNVM_NVMRC
+	unset FNVM_VER
+
 	fnvm_apply
 }
