@@ -120,15 +120,13 @@ source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init'
 	fi
 }
 fnvm_update() {
-	git -C $NVM_DIR/fnvm pull
+	git -C $FNVM_DIR pull
 	fnvm_uninit
-
-	[ -z "$nvmdir" ] && nvmdir="$HOME/.nvm"
 
 	[ -e "$HOME/.zshrc" ] && fnvm_update_rcfile "$HOME/.zshrc"
 	[ -e "$HOME/.bashrc" ] && fnvm_update_rcfile "$HOME/.bashrc"
 	
-	source $nvmdir/fnvm/fnvm.sh
+	source $FNVM_DIR/fnvm.sh
 	fnvm_init
 }
 
@@ -152,10 +150,10 @@ fnvm_uninit() {
 
 # load fnvm
 fnvm_init() {
-	if [ -z "$FNVM_DIR"]; then
+	if [ -z "$FNVM_NVMDIR"]; then
 		export NVM_DIR="$HOME/.nvm"
 	else
-		export NVM_DIR="$FNVM_DIR"
+		export NVM_DIR="$FNVM_NVMDIR"
 	fi
 	export FNVM_NVMRC_DEFAULT="$HOME/.nvmrc.default"
 	shell_name='$0'
