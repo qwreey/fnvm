@@ -120,7 +120,7 @@ source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init'
 	fi
 }
 fnvm_update() {
-	git -C $FNVM_DIR pull --unshallow
+	git -C $FNVM_DIR pull --depth 1
 	fnvm_uninit
 
 	[ -e "$HOME/.zshrc" ] && fnvm_update_rcfile "$HOME/.zshrc"
