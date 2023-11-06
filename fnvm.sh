@@ -53,6 +53,9 @@ fnvm_use() {
 fnvm_apply() {
 	# find .nvmrc file on cwd
 	cpd_nvmrc=$(nvm_find_nvmrc)
+	if [ -z "$cpd_nvmrc" ]; then
+		[ -e "./.node-version" ] && cpd_nvmrc=$(realpath ./.node-version)
+	fi
 	if [ ! -z "$cpd_nvmrc" ]; then
 		# found nvmrc, and match with last nvmrc file
 		[ "$cpd_nvmrc" = "$FNVM_NVMRC" ] && return
@@ -68,7 +71,7 @@ fnvm_apply() {
 			# found it, use with faster method
 			echo "Found '$cpd_nvmrc' with version $version"
 			fnvm_use $version
-			echo "PATH was updated"
+			echo "PATH updated"
 		fi
 		FNVM_NVMRC=$cpd_nvmrc
 		return
