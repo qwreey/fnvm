@@ -49,13 +49,18 @@ fnvm_use() {
 	fi
 }
 
-# load .nvmrc or ~/.nvmrc.default
+# load .node-version, .nvmrc or ~/.nvmrc.default
+fnvm_find_nodeversion() {
+  local dir
+  dir="$(nvm_find_up '.node-version')"
+  if [ -e "${dir}/.nvmrc" ]; then
+    nvm_echo "${dir}/.node-version"
+  fi
+}
 fnvm_apply() {
 	# find .nvmrc file on cwd
 	cpd_nvmrc=$(nvm_find_nvmrc)
-	if [ -z "$cpd_nvmrc" ]; then
-		[ -e "./.node-version" ] && cpd_nvmrc=$(realpath ./.node-version)
-	fi
+	[ -z "$cpd_nvmrc" ] && cpd_nvmrc=$(fnvm_find_nodeversion)
 	if [ ! -z "$cpd_nvmrc" ]; then
 		# found nvmrc, and match with last nvmrc file
 		[ "$cpd_nvmrc" = "$FNVM_NVMRC" ] && return
