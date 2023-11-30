@@ -53,7 +53,7 @@ fnvm_use() {
 fnvm_find_nodeversion() {
   local dir
   dir="$(nvm_find_up '.node-version')"
-  if [ -e "${dir}/.nvmrc" ]; then
+  if [ -e "${dir}/.node-version" ]; then
     nvm_echo "${dir}/.node-version"
   fi
 }
