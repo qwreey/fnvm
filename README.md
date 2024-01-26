@@ -26,7 +26,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 Next, install fnvm
 ```
 git clone https://github.com/qwreey75/fnvm.git ~/.nvm/fnvm --depth 1
-source ~/.nvm/fnvm/fnvm.sh; fnvm_update
+source ~/.fnvm/fnvm.sh; FNVM_DIR=~/.fnvm fnvm_update
 ```
 
 Done! If you want update fnvm, simply type `fnvm_update`
