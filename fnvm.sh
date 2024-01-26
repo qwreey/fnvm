@@ -41,7 +41,7 @@ fnvm_use() {
 		FNVM_VER="$1"
 	else
 		fnvm_out "ERROR: path '$version_dir' is not exist, failed to load nodejs. Please check your ~/.nvmrc.default"$'\n'
-		fnvm_out "Tip: To init .nvmrc.cached follow this step"$'\n'
+		fnvm_out "Tip: To init .nvmrc.default follow this step"$'\n'
 		fnvm_out "  nvm install node # Choose version you want"$'\n'
 		fnvm_out "  nvm use node"$'\n'
 		fnvm_out "  node --version > ~/.nvmrc.default"$'\n'
