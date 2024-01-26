@@ -116,9 +116,9 @@ fnvm_update_rcfile() {
 [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"  # This loads nvm
 [ -s \"\$NVM_DIR/bash_completion\" ] && \. \"\$NVM_DIR/bash_completion\"  # This loads nvm bash_completion"
 	replace='# load fnvm
-source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init'
+source $FNVM_DIR/fnvm.sh; fnvm_init'
 
-	grep -F -q 'source $HOME/.nvm/fnvm/fnvm.sh; fnvm_init' "$1" && return
+	grep -F -q 'source $FNVM_DIR/fnvm.sh; fnvm_init' "$1" && return
 	content="$(cat "$1")"
 	fnvm_safe_find "$content" "# FNVM NOUPDATE" && return
 
