@@ -94,6 +94,16 @@ fnvm_cd() {
 	\cd $@ && fnvm_apply
 }
 
+# resolve cygpath
+fnvm_cygpath() {
+	which cygpath > /dev/null
+	if [[ "x$?" == "x0" ]]; then
+		cygpath --mixed $1
+ 	else
+		printf "%s" $1
+	fi
+}
+
 # update fnvm
 # update single rc file
 fnvm_update_rcfile() {
@@ -102,7 +112,7 @@ fnvm_update_rcfile() {
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
 	pattern2='export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm'
-	pattern3="export NVM_DIR=\"$(cygpath --mixed $HOME)/.nvm\"
+	pattern3="export NVM_DIR=\"$(fnvm_cygpath $HOME)/.nvm\"
 [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"  # This loads nvm
 [ -s \"\$NVM_DIR/bash_completion\" ] && \. \"\$NVM_DIR/bash_completion\"  # This loads nvm bash_completion"
 	replace='# load fnvm
